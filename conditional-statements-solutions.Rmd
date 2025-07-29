@@ -1,5 +1,5 @@
 ---
-title: "conditional statement"
+title: "Conditional statements"
 output: html_document
 ---
 
@@ -54,10 +54,8 @@ ifelse (condition to be evaluated,
     action performed when condition is FALSE)
 ```
 
-
-Solution without checking for NA
+Solution without checking for NA:
 ```{r}
-# option 1
 penguins %>%
   mutate(mass_category = "Small") %>% # count(mass_category)
   mutate(mass_category = ifelse(body_mass_g >= 4000 & body_mass_g <= 5000, 
@@ -67,26 +65,7 @@ penguins %>%
                                 "Large",
                                 mass_category)) %>%
   group_by(mass_category) %>%
-  summarize(
-    avg_flipper_length = mean(flipper_length_mm, na.rm = TRUE)
-  )
-
-
-# option 2 (go over this in class)
-penguins %>%
-  mutate(mass_category = ifelse(body_mass_g < 4000, 
-                                "Small",
-                                mass_category)) %>%
-  mutate(mass_category = ifelse(body_mass_g >= 4000 & body_mass_g <= 5000, 
-                                "Medium",
-                                mass_category)) %>%
-  mutate(mass_category = ifelse(body_mass_g > 5000, 
-                                "Large",
-                                mass_category)) %>%
-  group_by(mass_category) %>%
-  summarize(
-    avg_flipper_length = mean(flipper_length_mm, na.rm = TRUE)
-  )
+  summarize(avg_flipper_length = mean(flipper_length_mm, na.rm = TRUE))
 ```
 
 Solution checking for NA:
@@ -102,9 +81,16 @@ penguins %>%
                                 "Large", 
                                 mass_category)) %>%
   group_by(mass_category) %>%
-  summarize(
-    avg_flipper_length = mean(flipper_length_mm, na.rm = TRUE)
-  )
+  summarize(avg_flipper_length = mean(flipper_length_mm, na.rm = TRUE))
+```
+
+Solution with nested `if_else()` (NOT recommended!):
+```{r}
+penguins %>%
+  mutate(mass_category = ifelse(body_mass_g > 5000, "Large",
+                                ifelse(body_mass_g >= 4000, "Medium", "Small"))) %>%
+  group_by(mass_category) %>%
+  summarize(avg_flipper_length = mean(flipper_length_mm, na.rm = TRUE))
 ```
 
 
